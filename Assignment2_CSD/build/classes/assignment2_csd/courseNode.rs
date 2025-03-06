@@ -1,0 +1,2 @@
+courseNode
+org.example.courseNode
