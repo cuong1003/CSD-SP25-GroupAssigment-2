@@ -1,12 +1,15 @@
+
 import java.util.Scanner;
 import java.io.*;
 import java.util.InputMismatchException;
 public class courseTree {
     courseNode root;
+    validDataInput vd = new validDataInput();
 
     public courseTree() {
         root = null;
     }
+    
     public boolean emptyTree() {
         if (root == null) {
             return true;
@@ -18,7 +21,6 @@ public class courseTree {
     public void addCourse(Courses course) {
         root = insertCourse(root, course);
     }
-
     private courseNode insertCourse(courseNode root, Courses course) {
         if (root == null) {
             return new courseNode(course); // Nếu current == null thì gán luôn course mới là làm node root.
@@ -39,7 +41,6 @@ public class courseTree {
     public void displayInorder() {
         displayInorderHelper(root);
     }
-
     private void displayInorderHelper(courseNode root) {
         if (root != null) {
             displayInorderHelper(root.left);
@@ -50,8 +51,7 @@ public class courseTree {
     
     public void displayPostOrder() {
         displayPostOrderHelper(root);
-    }
-    
+    }    
     private void displayPostOrderHelper(courseNode root) {
         if (root != null) {
             displayPostOrderHelper(root.left);
@@ -62,8 +62,7 @@ public class courseTree {
     
     public void displayPreOrder() {
         displayPreOrderHelper(root);
-    }
-    
+    }    
     private void displayPreOrderHelper(courseNode root) {
         if (root != null) {
             root.course.displayCourse();
@@ -111,7 +110,6 @@ public class courseTree {
             System.err.println("Lỗi khi lưu khóa học vào tệp: " + e.getMessage());
         }
     }
-
     private void saveCourseToFilePostOrderHelper(courseNode root, BufferedWriter bw) throws IOException {
         if (root != null) {
             saveCourseToFilePostOrderHelper(root.left, bw);
@@ -129,10 +127,12 @@ public class courseTree {
             return result;
         }
         return null;     
-    }
-    
+    }   
     private courseNode searchByCcodeHelper(courseNode current, String Ccode) {
-        int compareValue = current.course.getCcode().compareTo(Ccode);
+        if (current == null) {
+            return null;
+        }
+        int compareValue = Ccode.compareTo(current.course.getCcode());
         if (compareValue == 0) {
             return current;
         }
@@ -142,11 +142,99 @@ public class courseTree {
             return searchByCcodeHelper(current.right, Ccode);
         }
     }
+    public void deleteByCopying(String Ccode) {
+        if (emptyTree()) {
+            System.out.println("Cây BSTree không có dữ liệu, không thể xóa gì cả!");
+            return;
+        }
+        courseNode deleteCourse;
+        courseNode parentOfDeleteCourse;
+        deleteCourse = root;
+        parentOfDeleteCourse = null;
+        
+        while (deleteCourse != null) {
+            if (deleteCourse.course.getCcode().equalsIgnoreCase(Ccode)) {
+                break;
+            }
+            int compareResult = Ccode.compareToIgnoreCase(deleteCourse.course.getCcode());
+            if (compareResult < 0) {
+                parentOfDeleteCourse = deleteCourse;
+                deleteCourse = deleteCourse.left;
+            } else {
+                parentOfDeleteCourse = deleteCourse;
+                deleteCourse = deleteCourse.right;
+            }
+        }
+        
+        if (deleteCourse == null) {
+            System.out.println("Mã Ccode " + Ccode + " không tồn tại.");
+            return;
+        }
+        
+        if (deleteCourse.left == null && deleteCourse.right == null) {
+            if (parentOfDeleteCourse == null) {
+                root = null;
+            } else {
+                if (parentOfDeleteCourse.left == deleteCourse) {
+                    parentOfDeleteCourse.left = null;
+                } else {
+                    parentOfDeleteCourse.right = null;
+                }
+            }
+            return;
+        }
+        if (deleteCourse.left != null && deleteCourse.right == null) {
+            if (parentOfDeleteCourse == null) {
+                root = deleteCourse.left;
+            } else {
+                if (parentOfDeleteCourse.left == deleteCourse) {
+                    parentOfDeleteCourse.left = deleteCourse.left;
+                } else {
+                    parentOfDeleteCourse.right = deleteCourse.left;
+                }
+            }
+            deleteCourse.left = null;
+            return;
+        }
+        if (deleteCourse.left == null && deleteCourse.right != null) {
+            if (parentOfDeleteCourse == null) {
+                root = deleteCourse;
+            } else {
+                if (parentOfDeleteCourse.left == deleteCourse) {
+                    parentOfDeleteCourse.left = deleteCourse.right;
+                } else {
+                    parentOfDeleteCourse.right = deleteCourse.right;
+                }
+            }
+            deleteCourse.right = null;
+            return;            
+        }
+        
+        
+        if (deleteCourse.left != null && deleteCourse.right != null) {
+            courseNode parentReplaceNode;
+            courseNode replaceNode;
+            parentReplaceNode = null;
+            replaceNode = deleteCourse.left;
+            while (replaceNode.right != null) {
+                parentReplaceNode = replaceNode;
+                replaceNode = replaceNode.right;
+            }
+            deleteCourse.course.setCcode(replaceNode.course.getCcode());
+            if (parentReplaceNode == null) {
+                deleteCourse.left = replaceNode.left;
+            } else {
+                parentReplaceNode.right = replaceNode.left;
+            }
+            replaceNode.left = null;
+            return;
+        }
+        
+    }
     
     public void courseMain() {
         Scanner sc = new Scanner(System.in);
         int choice;
-
         do {
             System.out.println("\n========== MENU ==========");
             System.out.println("1.1 Load data from file");
@@ -166,7 +254,6 @@ public class courseTree {
             try {
                 choice = sc.nextInt();
                 sc.nextLine(); // Consume newline
-
                 if (choice >= 0 && choice <= 13) {
                     switch (choice) {
                         case 0:
@@ -180,6 +267,10 @@ public class courseTree {
                             addCourse(getUserInput());
                             break;
                         case 3:
+                            if (emptyTree()) {
+                                System.out.println("Cây BSTree không có dữ liệu. Vui lòng nạp dữ liệu vào trước!");
+                                break;
+                            }
                             System.out.println("=====================================");
                             displayPreOrder();
                             break;
@@ -188,12 +279,25 @@ public class courseTree {
                             saveCourseToFilePostOrder();
                             break;
                         case 5:
-                            courseNode result = searchByCcode(getUserCcode());
+                            if (emptyTree()) {
+                                System.out.println("Cây BSTree không có dữ liệu. Vui lòng nạp dữ liệu vào trước!");
+                                break;
+                            }
+                            courseNode result = searchByCcode(getUserCcode());                          
+                            
                             if (result == null) {
-                                System.out.println("Ccode không tồn tại");
+                                System.out.println("=====================================");
+                                System.out.println("Ccode không tồn tại!");
+                                break;
                             } else {
+                                System.out.println("------------>Đã tìm thấy<------------");
+                                System.out.println("=====================================");
                                 result.course.displayCourse();
-                            }                           
+                                break;
+                            } 
+                        case 6:
+                            System.out.println("=====================================");
+                            deleteByCopying(getUserDeleteCcode());
                         case 13:
                             System.out.println("=====================================");
                             displayPostOrder();
@@ -205,7 +309,6 @@ public class courseTree {
                 } else {
                     System.out.println("Invalid choice. Please enter a number between 0 and 12.");
                 }
-
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Please enter an integer.");
                 sc.nextLine(); // Clear invalid input
@@ -214,115 +317,62 @@ public class courseTree {
     }
 
     public Courses getUserInput() {
-        Scanner sc = new Scanner(System.in);
         String ccode, scode, sname, semester, year;
         int seats, registered;
         double price;
-
+        ccode = vd.getString("Nhập mã khóa học (ccode): ", "^[a-zA-Z0-9]+$");
+        scode = vd.getString("Nhập mã môn học (scode): ", "^[a-zA-Z0-9]+$");
+        sname = vd.getString("Nhập tên môn học (sname): ", "^[^,]*$"); // Không lấy dấu "," tránh bị lỗi khi save vào file và read lại file.
+        semester = vd.getString("Nhập học kỳ (semester): ", "^[a-zA-Z0-9]+$");
+        year = vd.getString("Nhập năm (year): ", "^[a-zA-Z0-9]+$");
+        
         while (true) {
-            System.out.print("Nhập mã khóa học (ccode): ");
-            ccode = sc.nextLine().trim(); //trim() để loại bỏ khoảng trắng đầu cuối.
-            if (!ccode.isEmpty()) {
-                break;
-            } else {
-                System.out.println("Mã khóa học không được để trống!");
+            int getSeats = vd.getInt("Nhập số ghế ngồi (seats): ");
+            if (getSeats <=0) {
+                System.out.println("Số ghế ngồi phải lớn hơn 0. Vui lòng nhập lại!");
+                continue;
             }
+            seats = getSeats;
+            break;
         }
+        
         while (true) {
-            System.out.print("Nhập mã môn học (scode): ");
-            scode = sc.nextLine().trim();
-             if (!scode.isEmpty()) {
-                break;
-            } else {
-                System.out.println("Mã môn học không được để trống!");
-            }
-        }
-        while (true) {
-            System.out.print("Nhập tên môn học (sname): ");
-            sname = sc.nextLine().trim();
-             if (!sname.isEmpty()) {
-                break;
-            } else {
-                System.out.println("Tên môn học không được để trống!");
-            }
-        }
-        while (true) {
-            System.out.print("Nhập học kỳ: ");
-            semester = sc.nextLine().trim();
-             if (!semester.isEmpty()) {
-                break;
-            } else {
-                System.out.println("Học kỳ không được để trống!");
-            }
-        }
-        while (true) {
-            System.out.print("Nhập năm: ");
-            year = sc.nextLine().trim();
-             if (!year.isEmpty()) {
-                break;
-            } else {
-                System.out.println("Năm không được để trống!");
-            }
+             int getRegistered = vd.getInt("Nhập số lượng đã đăng ký (Registered): ");
+             if (getRegistered > seats) {
+                 System.out.println("Lỗi: Số lượng đã đăng ký không thể lớn hơn số ghế ngồi. Vui lòng nhập lại!");
+                 continue;
+             }
+             if (getRegistered < 0) {
+                 System.out.println("Lỗi: Số lượng đã đăng ký không thể âm. Vui lòng nhập lại!");
+                 continue;
+             }
+             registered = getRegistered;
+             break;
         }
 
         while (true) {
-            try {
-                System.out.print("Nhập số chỗ: ");
-                seats = Integer.parseInt(sc.nextLine());
-                if(seats >= 0 ){
-                     break;
-                } else{
-                     System.out.println("Số chỗ không được âm");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Số chỗ phải là số nguyên!");
-            }
-
-        }
-        while (true) {
-             try {
-                System.out.print("Nhập số lượng đã đăng ký: ");
-                registered = Integer.parseInt(sc.nextLine());
-                 if(registered >= 0 ){
-                     break;
-                } else{
-                     System.out.println("Số lượng đăng ký không được âm");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Số lượng đã đăng ký phải là số nguyên!");
-            }
-        }
-
-        while (true) {
-           try{
-               System.out.print("Nhập giá: ");
-               price = Double.parseDouble(sc.nextLine());
-               if(price>=0){
-                    break;
-               } else{
-                    System.out.println("Giá không được âm");
-               }
-
-           } catch (NumberFormatException e){
-                System.out.println("Giá phải là số thực!");
+           double getPrice = vd.getDouble("Nhập giá (price): ");
+           if (getPrice == 0) {
+               System.out.println("Trên đời này làm gì có cái gì miễn phí ?");
+               continue;
            }
+           if (getPrice < 0) {
+               System.out.println("Lỗi: Giá tiền không thể nào âm. Vui lòng nhập lại!");
+               continue;
+           }
+           price = getPrice;
+           break;
         }
         
         return new Courses(ccode, scode, sname, semester, year, seats, registered, price);
     }
 
     private String getUserCcode() {
-        Scanner sc = new Scanner(System.in);
-        String ccode;
-        while (true) {
-            System.out.print("Nhập mã khóa học cần tìm (ccode): ");
-            ccode = sc.nextLine().trim(); //trim() để loại bỏ khoảng trắng đầu cuối.
-            if (!ccode.isEmpty()) {
-                break;
-            } else {
-                System.out.println("Mã khóa học không được để trống!");
-            }
-        }
+        String ccode = vd.getString("Nhập mã khóa học cần tìm (ccode): ", "^[a-zA-Z0-9]+$");
+        return ccode;
+    }
+    private String getUserDeleteCcode() {
+        String ccode = vd.getString("Nhập mã khóa học cần xóa (ccode): ", "^[a-zA-Z0-9]+$");
         return ccode;
     }
 
