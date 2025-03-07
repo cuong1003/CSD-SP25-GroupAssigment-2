@@ -1,5 +1,11 @@
-CS101,PROG101,Lập trình cơ bản,1,2023,50,30,500000
-MATH201,CALC101,Giải tích 1,2,2023,40,35,450000
-ENG101,ENG101,Tiếng Anh cơ bản,1,2024,60,55,400000
-PHYS101,PHYS101,Vật lý đại cương,2,2024,30,25,550000
-CS201,DATASTR,Cấu trúc dữ liệu và giải thuật,1,2023,45,40,600000
+CS101,IT101,Introduction to Programming,Fall,2023,30,25,100.00
+CS102,IT201,Data Structures,Spring,2024,25,20,120.50
+MA201,MA101,Calculus I,Fall,2023,35,30,110.75
+PH101,PH101,Introduction to Physics,Spring,2024,28,22,95.25
+EN101,EN101,English Composition I,Fall,2023,32,28,90.00
+CS201,IT301,Algorithms,Fall,2023,20,18,150.00
+MA202,MA102,Calculus II,Spring,2024,30,27,125.50
+PH102,PH102,Physics II,Spring,2024,25,20,100.00
+EN102,EN102,English Composition II,Fall,2023,30,25,95.00
+CS301,IT401,Database Management,Spring,2024,18,15,160.00
+CS111,IT111,Programming for Beginners,Fall,2023,30,10,100.00
