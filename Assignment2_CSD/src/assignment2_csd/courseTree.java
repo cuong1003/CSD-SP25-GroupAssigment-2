@@ -143,93 +143,45 @@ public class courseTree {
         }
     }
     public void deleteByCopying(String Ccode) {
-        if (emptyTree()) {
-            System.out.println("Cây BSTree không có dữ liệu, không thể xóa gì cả!");
-            return;
-        }
-        courseNode deleteCourse;
-        courseNode parentOfDeleteCourse;
-        deleteCourse = root;
-        parentOfDeleteCourse = null;
+        courseNode deleteNode;
+        courseNode parentOfDeleteNode;
+        deleteNode = root;
+        parentOfDeleteNode = null;
         
-        while (deleteCourse != null) {
-            if (deleteCourse.course.getCcode().equalsIgnoreCase(Ccode)) {
-                break;
-            }
-            int compareResult = Ccode.compareToIgnoreCase(deleteCourse.course.getCcode());
-            if (compareResult < 0) {
-                parentOfDeleteCourse = deleteCourse;
-                deleteCourse = deleteCourse.left;
+        //Tìm Node cần xóa theo Ccode.
+        while (deleteNode != null) {
+            //Case Node cần xóa đầu tiên là Root.
+            int compareResult = Ccode.compareToIgnoreCase(deleteNode.course.getCcode());
+            if (compareResult == 0) {
+                break; //Trả về Node chứa Ccode giống với UserInput.
+            } 
+            if (compareResult < 0) {           
+                parentOfDeleteNode = deleteNode;
+                deleteNode = deleteNode.left;
             } else {
-                parentOfDeleteCourse = deleteCourse;
-                deleteCourse = deleteCourse.right;
-            }
+                parentOfDeleteNode = deleteNode;
+                deleteNode = deleteNode.right;
+            }              
         }
-        
-        if (deleteCourse == null) {
-            System.out.println("Mã Ccode " + Ccode + " không tồn tại.");
+        //Không tồn tại Ccode
+        if (deleteNode == null) {
+            System.out.println("Mã khóa học: " + Ccode + " không tồn tại trong BSTree!");
             return;
-        }
-        
-        if (deleteCourse.left == null && deleteCourse.right == null) {
-            if (parentOfDeleteCourse == null) {
-                root = null;
-            } else {
-                if (parentOfDeleteCourse.left == deleteCourse) {
-                    parentOfDeleteCourse.left = null;
+        }           
+        //TH1: Ccode cần tìm là Note không có con nào.
+        if (deleteNode.left == null && deleteNode.right == null) {
+            // BSTree chỉ có 1 Node (Chính nó là Root cha)
+            if (parentOfDeleteNode == null) {
+                if (deleteNode.course.getRegistered() == 0) {
+                    root = null;
+                    System.out.println("Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    return;
                 } else {
-                    parentOfDeleteCourse.right = null;
+                    System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    return;
                 }
             }
-            return;
-        }
-        if (deleteCourse.left != null && deleteCourse.right == null) {
-            if (parentOfDeleteCourse == null) {
-                root = deleteCourse.left;
-            } else {
-                if (parentOfDeleteCourse.left == deleteCourse) {
-                    parentOfDeleteCourse.left = deleteCourse.left;
-                } else {
-                    parentOfDeleteCourse.right = deleteCourse.left;
-                }
-            }
-            deleteCourse.left = null;
-            return;
-        }
-        if (deleteCourse.left == null && deleteCourse.right != null) {
-            if (parentOfDeleteCourse == null) {
-                root = deleteCourse;
-            } else {
-                if (parentOfDeleteCourse.left == deleteCourse) {
-                    parentOfDeleteCourse.left = deleteCourse.right;
-                } else {
-                    parentOfDeleteCourse.right = deleteCourse.right;
-                }
-            }
-            deleteCourse.right = null;
-            return;            
-        }
-        
-        
-        if (deleteCourse.left != null && deleteCourse.right != null) {
-            courseNode parentReplaceNode;
-            courseNode replaceNode;
-            parentReplaceNode = null;
-            replaceNode = deleteCourse.left;
-            while (replaceNode.right != null) {
-                parentReplaceNode = replaceNode;
-                replaceNode = replaceNode.right;
-            }
-            deleteCourse.course.setCcode(replaceNode.course.getCcode());
-            if (parentReplaceNode == null) {
-                deleteCourse.left = replaceNode.left;
-            } else {
-                parentReplaceNode.right = replaceNode.left;
-            }
-            replaceNode.left = null;
-            return;
-        }
-        
+        }          
     }
     
     public void courseMain() {
@@ -296,8 +248,13 @@ public class courseTree {
                                 break;
                             } 
                         case 6:
+                            if (emptyTree()) {
+                                System.out.println("Thông báo: Cây BStree chưa có dữ liệu, Vui lòng đổ dữ liệu vào cây BSTree!");
+                                break;
+                            }
                             System.out.println("=====================================");
                             deleteByCopying(getUserDeleteCcode());
+                            break;
                         case 13:
                             System.out.println("=====================================");
                             displayPostOrder();
