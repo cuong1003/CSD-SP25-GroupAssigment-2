@@ -168,20 +168,25 @@ public class courseTree {
             System.out.println("Mã khóa học: " + Ccode + " không tồn tại trong BSTree!");
             return;
         }           
-        //TH1: Ccode cần tìm là Note không có con nào.
+        //TH1: Ccode cần xóa là Note không có con nào.
         if (deleteNode.left == null && deleteNode.right == null) {
             // BSTree chỉ có 1 Node (Chính nó là Root cha)
             if (parentOfDeleteNode == null) {
                 if (deleteNode.course.getRegistered() == 0) {
                     root = null;
                     System.out.println("Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
-                    return;
                 } else {
                     System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
-                    return;
+                }      
+            } else {
+                if (parentOfDeleteNode.left == deleteNode) {
+                    parentOfDeleteNode.left = null;
+                } else {
+                    parentOfDeleteNode.right = null;                   
                 }
             }
-        }          
+        }        
+        //TH2: Ccode cần xóa là Node có 1 con bên trái.
     }
     
     public void courseMain() {
