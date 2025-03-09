@@ -92,7 +92,7 @@ public class courseTree {
                     System.err.println("Invalid line in file: " + line);
                 }
             }
-            System.out.println("Đã Load File thành công!");
+            System.out.println("Thông báo: Đã Load File thành công!");
             System.out.println("=====================================");
         } catch (IOException | NumberFormatException e) {
             System.err.println("Error loading courses from file: " + e.getMessage());
@@ -104,10 +104,10 @@ public class courseTree {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("src/assignment2_csd/Courses.txt"))) {
             saveCourseToFilePostOrderHelper(root, bw);
             System.out.println("=====================================");
-            System.out.println("Đã Save File thành công!");
+            System.out.println("Thông báo: Đã Save File thành công!");
             
         } catch (IOException e) {
-            System.err.println("Lỗi khi lưu khóa học vào tệp: " + e.getMessage());
+            System.err.println("Lỗi: Khi lưu khóa học vào tệp: " + e.getMessage());
         }
     }
     private void saveCourseToFilePostOrderHelper(courseNode root, BufferedWriter bw) throws IOException {
@@ -132,7 +132,7 @@ public class courseTree {
         if (current == null) {
             return null;
         }
-        int compareValue = Ccode.compareTo(current.course.getCcode());
+        int compareValue = Ccode.compareToIgnoreCase(current.course.getCcode());
         if (compareValue == 0) {
             return current;
         }
@@ -142,6 +142,12 @@ public class courseTree {
             return searchByCcodeHelper(current.right, Ccode);
         }
     }
+//    public courseNode findMaxNode() {
+//        
+//    }
+//    private courseNodeHelper findMaxNode() {
+//        
+//    }
     public void deleteByCopying(String Ccode) {
         courseNode deleteNode;
         courseNode parentOfDeleteNode;
@@ -165,7 +171,7 @@ public class courseTree {
         }
         //Không tồn tại Ccode
         if (deleteNode == null) {
-            System.out.println("Mã khóa học: " + Ccode + " không tồn tại trong BSTree!");
+            System.out.println("Thông báo: Mã khóa học [" + Ccode + "] không tồn tại trong BSTree!");
             return;
         }           
         //TH1: Ccode cần xóa là Note không có con nào.
@@ -174,23 +180,259 @@ public class courseTree {
             if (parentOfDeleteNode == null) {
                 if (deleteNode.course.getRegistered() == 0) {
                     root = null;
-                    System.out.println("Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
                 } else {
                     System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
-                }      
+                }
             } else {
+                //TH: Node deleteNode là Node không có con nào và nằm bên trái.
                 if (parentOfDeleteNode.left == deleteNode) {
-                    parentOfDeleteNode.left = null;
+                    if (deleteNode.course.getRegistered() == 0) {
+                        parentOfDeleteNode.left = null;
+                        System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }
+                //TH: Node deleteNode là Node không có con nào và nằm bên phải.                    
                 } else {
-                    parentOfDeleteNode.right = null;                   
+                    if (deleteNode.course.getRegistered() == 0) {
+                        parentOfDeleteNode.right = null;   
+                        System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }
+                                    
                 }
             }
         }        
         //TH2: Ccode cần xóa là Node có 1 con bên trái.
+       if (deleteNode.left != null && deleteNode.right == null) {
+           if (parentOfDeleteNode == null) {
+                if (deleteNode.course.getRegistered() == 0) {
+                        root = deleteNode.left;
+                        System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }              
+            } else if (parentOfDeleteNode.left == deleteNode) {
+                if (deleteNode.course.getRegistered() == 0) {
+                        parentOfDeleteNode.left = deleteNode.left;
+                        System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }                          
+            } else if (parentOfDeleteNode.right == deleteNode){
+                if (deleteNode.course.getRegistered() == 0) {
+                        parentOfDeleteNode.right = deleteNode.left;
+                        System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }                
+            }
+            deleteNode.left = null; //garbage dsadascollectiondưdqwdq
+            return;
+       }
+       //TH3: Ccode cần xóa là Node có 1 con bên phải.
+       if (deleteNode.left == null && deleteNode.right != null) {
+           if (parentOfDeleteNode == null) {
+                if (deleteNode.course.getRegistered() == 0) {
+                        root = deleteNode.right;
+                        System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }
+               
+             } else if (parentOfDeleteNode.right == deleteNode) {
+                if (deleteNode.course.getRegistered() == 0) {
+                        parentOfDeleteNode.right = deleteNode.right;
+                        System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }              
+            } else if (parentOfDeleteNode.left == deleteNode) {
+                if (deleteNode.course.getRegistered() == 0) {
+                        parentOfDeleteNode.left = deleteNode.right;
+                        System.out.println("Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }               
+            }
+           deleteNode.right = null;
+           return;
+        }
+        //TH4: Ccode cần xóa là Node có cả 2 con bên trái và phải
+        if (deleteNode.left != null && deleteNode.right != null) {
+            courseNode maxNode;
+            maxNode = deleteNode.left;
+            //TH: Node con bên trái của deleteNode chính là maxNode
+            if (maxNode.right == null) {
+                if (deleteNode.course.getRegistered() == 0) {
+                        deleteNode.course = maxNode.course;
+                        deleteNode.left = maxNode.left;
+                        System.out.println("Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }                
+                return;
+            }
+            //TH: Còn lại
+            while (maxNode.right.right != null) {
+                maxNode = maxNode.right;
+                //maxNode lúc này sẽ là node dứngd dằng trước của mắc nốt thực sự.
+            }
+            if (deleteNode.course.getRegistered() == 0) {
+                        deleteNode.course = maxNode.right.course;
+                        maxNode.right = maxNode.right.left; //***
+                        System.out.println("Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }           
+            return;
+        }
     }
+    
+    public void deleteByMerging(String Ccode) {
+        courseNode deleteNode;
+        courseNode parentOfDeleteNode;
+        deleteNode = root;
+        parentOfDeleteNode = null;
+        
+        //Tìm Node cần xóa theo Ccode.
+        while (deleteNode != null) {
+            //Case Node cần xóa đầu tiên là Root.
+            int compareResult = Ccode.compareToIgnoreCase(deleteNode.course.getCcode());
+            if (compareResult == 0) {
+                break; //Trả về Node chứa Ccode giống với UserInput.
+            } 
+            if (compareResult < 0) {           
+                parentOfDeleteNode = deleteNode;
+                deleteNode = deleteNode.left;
+            } else {
+                parentOfDeleteNode = deleteNode;
+                deleteNode = deleteNode.right;
+            }              
+        }
+        //Không tồn tại Ccode
+        if (deleteNode == null) {
+            System.out.println("Thông báo: Mã khóa học [" + Ccode + "] không tồn tại trong BSTree!");
+            return;
+        }           
+        //TH1: Ccode cần xóa là Note không có con nào.
+        if (deleteNode.left == null && deleteNode.right == null) {
+            // BSTree chỉ có 1 Node (Chính nó là Root cha)
+            if (parentOfDeleteNode == null) {
+                if (deleteNode.course.getRegistered() == 0) {
+                    root = null;
+                    System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                } else {
+                    System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                }
+            } else {
+                //TH: Node deleteNode là Node không có con nào và nằm bên trái.
+                if (parentOfDeleteNode.left == deleteNode) {
+                    if (deleteNode.course.getRegistered() == 0) {
+                        parentOfDeleteNode.left = null;
+                        System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }
+                //TH: Node deleteNode là Node không có con nào và nằm bên phải.                    
+                } else {
+                    if (deleteNode.course.getRegistered() == 0) {
+                        parentOfDeleteNode.right = null;   
+                        System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }
+                                    
+                }
+            }
+        }        
+        //TH2: Ccode cần xóa là Node có 1 con bên trái.
+       if (deleteNode.left != null && deleteNode.right == null) {
+           if (parentOfDeleteNode == null) {
+                if (deleteNode.course.getRegistered() == 0) {
+                        root = deleteNode.left;
+                        System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }              
+            } else if (parentOfDeleteNode.left == deleteNode) {
+                if (deleteNode.course.getRegistered() == 0) {
+                        parentOfDeleteNode.left = deleteNode.left;
+                        System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }                          
+            } else if (parentOfDeleteNode.right == deleteNode){
+                if (deleteNode.course.getRegistered() == 0) {
+                        parentOfDeleteNode.right = deleteNode.left;
+                        System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }                
+            }
+            deleteNode.left = null; //garbage dsadascollectiondưdqwdq
+            return;
+       }
+       //TH3: Ccode cần xóa là Node có 1 con bên phải.
+       if (deleteNode.left == null && deleteNode.right != null) {
+           if (parentOfDeleteNode == null) {
+                if (deleteNode.course.getRegistered() == 0) {
+                        root = deleteNode.right;
+                        System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }
+               
+             } else if (parentOfDeleteNode.right == deleteNode) {
+                if (deleteNode.course.getRegistered() == 0) {
+                        parentOfDeleteNode.right = deleteNode.right;
+                        System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }              
+            } else if (parentOfDeleteNode.left == deleteNode) {
+                if (deleteNode.course.getRegistered() == 0) {
+                        parentOfDeleteNode.left = deleteNode.right;
+                        System.out.println("Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                    } else {
+                        System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
+                    }               
+            }
+           deleteNode.right = null;
+           return;
+        }
+        //TH4: Ccode cần xóa là Node có cả 2 con bên trái và phải
+        if (deleteNode.left != null && deleteNode.right != null) {
+            courseNode maxNode;
+            //TH: DeleteNode chính là root.
+            if (parentOfDeleteNode == null) {
+                maxNode = root.left;
+                if (maxNode.right == null) { //root left chính là node max luôn.
+                    maxNode.right = root.right;
+                    root = maxNode;
+                    return;
+                }
+                while (maxNode.right.right != null) {
+                    maxNode = maxNode.right;
+                }
+                maxNode.right.right = root.right;
+                root = root.left;
+                return;
+            } else { //TH DeleteNode không phải root;
+                maxNode = deleteNode.left;
+                if (maxNode.right == null) {
+                    
+                }
+            }
+        }
+    }
+    
     
     public void courseMain() {
         Scanner sc = new Scanner(System.in);
+        String Schoice;
         int choice;
         do {
             System.out.println("\n========== MENU ==========");
@@ -209,8 +451,16 @@ public class courseTree {
             System.out.println("0. Exit to main menu");
             System.out.print("Enter your choice: ");
             try {
-                choice = sc.nextInt();
-                sc.nextLine(); // Consume newline
+                Schoice = sc.nextLine().trim();
+                if (Schoice.isEmpty()) {
+                    System.out.println("Lỗi: Input không được bỏ trống. Vui lòng nhập lại!");
+                    continue;
+                }
+                choice = Integer.parseInt(Schoice);
+                if (choice < 0 || choice > 12) {
+                    System.out.println("Lỗi: Vui lòng chọn menu (1-12) hoặc (0) để quay về Menu chính!");
+                    continue;
+                }
                 if (choice >= 0 && choice <= 13) {
                     switch (choice) {
                         case 0:
@@ -225,7 +475,7 @@ public class courseTree {
                             break;
                         case 3:
                             if (emptyTree()) {
-                                System.out.println("Cây BSTree không có dữ liệu. Vui lòng nạp dữ liệu vào trước!");
+                                System.out.println("Thông báo: Cây BSTree không có dữ liệu. Vui lòng nạp dữ liệu vào trước!");
                                 break;
                             }
                             System.out.println("=====================================");
@@ -237,14 +487,14 @@ public class courseTree {
                             break;
                         case 5:
                             if (emptyTree()) {
-                                System.out.println("Cây BSTree không có dữ liệu. Vui lòng nạp dữ liệu vào trước!");
+                                System.out.println("Thông báo: Cây BSTree không có dữ liệu. Vui lòng nạp dữ liệu vào trước!");
                                 break;
                             }
                             courseNode result = searchByCcode(getUserCcode());                          
                             
                             if (result == null) {
                                 System.out.println("=====================================");
-                                System.out.println("Ccode không tồn tại!");
+                                System.out.println("Thông báo: Ccode không tồn tại!");
                                 break;
                             } else {
                                 System.out.println("------------>Đã tìm thấy<------------");
@@ -260,20 +510,22 @@ public class courseTree {
                             System.out.println("=====================================");
                             deleteByCopying(getUserDeleteCcode());
                             break;
+                        case 7:
+                            if (emptyTree()) {
+                                System.out.println("Thông báo: Cây BStree chưa có dữ liệu, Vui lòng đổ dữ liệu vào cây BSTree!");
+                                break;
+                            }
+                            System.out.println("=====================================");
+                            deleteByMerging(getUserDeleteCcode());
+                            break;
                         case 13:
                             System.out.println("=====================================");
                             displayPostOrder();
-                            break;
-                            
-                        default:
-                            System.out.println("vui lòng chọn menu (1-12) hoặc (0) để quay về Menu chính!");
+                            break;                          
                     }
-                } else {
-                    System.out.println("Invalid choice. Please enter a number between 0 and 12.");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input. Please enter an integer.");
-                sc.nextLine(); // Clear invalid input
+                }         
+            } catch (NumberFormatException e) {
+                System.out.println("Lỗi: Vui lòng nhập một số nguyên.");
             }
         } while (true);
     }
@@ -315,7 +567,7 @@ public class courseTree {
         while (true) {
            double getPrice = vd.getDouble("Nhập giá (price): ");
            if (getPrice == 0) {
-               System.out.println("Trên đời này làm gì có cái gì miễn phí ?");
+               System.out.println("Thông báo: Trên đời này làm gì có cái gì miễn phí ?");
                continue;
            }
            if (getPrice < 0) {

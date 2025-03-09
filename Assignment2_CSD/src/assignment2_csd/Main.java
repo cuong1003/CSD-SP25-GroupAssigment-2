@@ -2,6 +2,8 @@
 
 public class Main {
     public static void main(String[] args) {
+        //studentMenu menu = new studentMenu();
+        //menu.menu();
         courseTree ctree = new courseTree();
         ctree.courseMain();
 //        ctree.loadCourseFromFile();

@@ -1,0 +1,3 @@
+Student{scode=S001, name=John Doe, byear=2018}
+Student{scode=S003, name=Bob Johnson, byear=2020}
+Student{scode=S002, name=Alice Smith, byear=2019}
