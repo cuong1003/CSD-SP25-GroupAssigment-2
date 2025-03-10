@@ -24,16 +24,14 @@ public class Courses {
     }
 
     public void displayCourse() {
-        System.out.println("Ccode: " + ccode);
-        System.out.println("Scode: " + scode);
-        System.out.println("Sname: " + sname);
-        System.out.println("Semester: " + semester);
-        System.out.println("Year: " + year);
-        System.out.println("Seats: " + seats);
-        System.out.println("Registered: " + registered);
-        System.out.println("Price: " + price);
-        System.out.println("=====================================");
+        System.out.println("Courses{" + "ccode=" + ccode + ", scode=" + scode + ", sname=" + sname + ", semester=" + semester + ", year=" + year + ", seats=" + seats + ", registered=" + registered + ", price=" + price + '}');
     }
+
+    @Override
+    public String toString() {
+        return "Courses{" + "ccode=" + ccode + ", scode=" + scode + ", sname=" + sname + ", semester=" + semester + ", year=" + year + ", seats=" + seats + ", registered=" + registered + ", price=" + price + '}';
+    }
+    
 
     public String getCcode() {
         return ccode;
@@ -98,11 +96,4 @@ public class Courses {
     public void setPrice(double price) {
         this.price = price;
     }
-
-    @Override
-    public String toString() {
-        return "Courses{" + "ccode=" + ccode + ", scode=" + scode + ", sname=" + sname + ", semester=" + semester + ", year=" + year + ", seats=" + seats + ", registered=" + registered + ", price=" + price + '}';
-    }
-
-
 }

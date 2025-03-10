@@ -93,7 +93,6 @@ public class courseTree {
                 }
             }
             System.out.println("Thông báo: Đã Load File thành công!");
-            System.out.println("=====================================");
         } catch (IOException | NumberFormatException e) {
             System.err.println("Error loading courses from file: " + e.getMessage());
         }
@@ -103,7 +102,6 @@ public class courseTree {
     
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("src/assignment2_csd/Courses.txt"))) {
             saveCourseToFilePostOrderHelper(root, bw);
-            System.out.println("=====================================");
             System.out.println("Thông báo: Đã Save File thành công!");
             
         } catch (IOException e) {
@@ -229,7 +227,6 @@ public class courseTree {
                         System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
                     }                
             }
-            deleteNode.left = null; //garbage dsadascollectiondưdqwdq
             return;
        }
        //TH3: Ccode cần xóa là Node có 1 con bên phải.
@@ -257,7 +254,6 @@ public class courseTree {
                         System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
                     }               
             }
-           deleteNode.right = null;
            return;
         }
         //TH4: Ccode cần xóa là Node có cả 2 con bên trái và phải
@@ -281,16 +277,16 @@ public class courseTree {
                 //maxNode lúc này sẽ là node dứngd dằng trước của mắc nốt thực sự.
             }
             if (deleteNode.course.getRegistered() == 0) {
+                        System.out.println("Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
                         deleteNode.course = maxNode.right.course;
                         maxNode.right = maxNode.right.left; //***
-                        System.out.println("Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
                     } else {
                         System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
                     }           
             return;
         }
     }
-    
+      
     public void deleteByMerging(String Ccode) {
         courseNode deleteNode;
         courseNode parentOfDeleteNode;
@@ -372,7 +368,6 @@ public class courseTree {
                         System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
                     }                
             }
-            deleteNode.left = null; //garbage dsadascollectiondưdqwdq
             return;
        }
        //TH3: Ccode cần xóa là Node có 1 con bên phải.
@@ -395,12 +390,11 @@ public class courseTree {
             } else if (parentOfDeleteNode.left == deleteNode) {
                 if (deleteNode.course.getRegistered() == 0) {
                         parentOfDeleteNode.left = deleteNode.right;
-                        System.out.println("Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
+                        System.out.println("Thông báo: Đã xóa khóa học " + deleteNode.course.getCcode() +  " thành công.");
                     } else {
                         System.out.println("Lỗi: Khóa học đã có " + deleteNode.course.getRegistered() + " sinh viên đăng ký, Không thể xóa.");
                     }               
             }
-           deleteNode.right = null;
            return;
         }
         //TH4: Ccode cần xóa là Node có cả 2 con bên trái và phải
@@ -445,108 +439,130 @@ public class courseTree {
         }
     }
     
+    public void displayBreadthFirstTraversal() {
+        if (root == null) {
+            System.out.println("Thông báo: Cây BSTree không có dữ liệu. Vui lòng nạp dữ liệu vào trước!");
+            return;
+        }
+        myQueue mq = new myQueue();
+        mq.enqueue(root);
+        while (!mq.isEmpty()) {
+            courseNode currentCourseNode = mq.dequeue();
+            currentCourseNode.course.displayCourse();
+            if (currentCourseNode.left != null) {
+                mq.enqueue(currentCourseNode.left);
+            }
+            if (currentCourseNode.right != null) {
+                mq.enqueue(currentCourseNode.right);
+            }
+        }
+    }
     
     public void courseMain() {
         Scanner sc = new Scanner(System.in);
-        String Schoice;
-        int choice;
+        int choice; // Không cần biến String Schoice nữa
+
         do {
-            System.out.println("\n========== MENU ==========");
-            System.out.println("1.1 Load data from file");
-            System.out.println("1.2 Input & add to the tree");
-            System.out.println("1.3 Display data by pre-order traversal");
-            System.out.println("1.4 Save course tree to file by post-order traversal");
-            System.out.println("1.5 Search by ccode");
-            System.out.println("1.6 Delete by bcode by copying");
-            System.out.println("1.7 Delete by bcode by copying"); 
-            System.out.println("1.8 Simply balancing");
-            System.out.println("1.9 Display data by breadth-first traversalCount the number of courses");
-            System.out.println("1.10 Count the number of courses");
-            System.out.println("1.11 Search course by name");
-            System.out.println("1.12 Search course by ccode");
-            System.out.println("0. Exit to main menu");
+            System.out.println("|==================== Course Tree =====================|");
+            System.out.println("| 1.1 Load data from file                              |");
+            System.out.println("| 1.2 Input & add to the tree                          |");
+            System.out.println("| 1.3 Display data by pre-order traversal              |");
+            System.out.println("| 1.4 Save course tree to file by post-order traversal |");
+            System.out.println("| 1.5 Search by ccode                                  |");
+            System.out.println("| 1.6 Delete by bcode by copying                       |");
+            System.out.println("| 1.7 Delete by bcode by merging                       |");
+            System.out.println("| 1.8 Simply balancing                                 |");
+            System.out.println("| 1.9 Display data by breadth-first traversal          |");
+            System.out.println("| 1.10 Count the number of courses                     |");
+            System.out.println("| 1.11 Search course by name                           |");
+            System.out.println("| 1.12 Search course by ccode                          |");
+            System.out.println("| 0. Exit to main menu                                 |");
+            System.out.println("|======================================================|");
             System.out.print("Enter your choice: ");
+
             try {
-                Schoice = sc.nextLine().trim();
-                if (Schoice.isEmpty()) {
+                String input = sc.nextLine().trim();
+                 if (input.isEmpty()) {
                     System.out.println("Lỗi: Input không được bỏ trống. Vui lòng nhập lại!");
                     continue;
                 }
-                choice = Integer.parseInt(Schoice);
-                if (choice < 0 || choice > 12) {
+                choice = Integer.parseInt(input);
+
+
+                if (choice == 0) {
+                    System.out.println("Quay về Menu chính...");
+                    break;
+                }
+
+                if (choice < 1 || choice > 12) {
                     System.out.println("Lỗi: Vui lòng chọn menu (1-12) hoặc (0) để quay về Menu chính!");
                     continue;
                 }
-                if (choice >= 0 && choice <= 13) {
-                    switch (choice) {
-                        case 0:
-                            System.out.println("Quay về Menu chính...");
+
+                switch (choice) {
+                    case 1:  
+                        loadCourseFromFile(); 
+                        break;
+                    case 2:  
+                        System.out.println("|======================================================|");
+                        addCourse(getUserInput()); 
+                        break;
+                    case 3:
+                        if (emptyTree()) {
+                            System.out.println("Thông báo: Cây BSTree không có dữ liệu. Vui lòng nạp dữ liệu vào trước!");
                             break;
-                        case 1:
-                            loadCourseFromFile();
+                        }
+                        System.out.println("|======================================================|");
+                        displayPreOrder();
+                        break;
+                    case 4:  
+                        saveCourseToFilePostOrder(); 
+                        break;
+                    case 5:
+                        if (emptyTree()) {
+                            System.out.println("Thông báo: Cây BSTree không có dữ liệu. Vui lòng nạp dữ liệu vào trước!");
                             break;
-                        case 2:
-                            System.out.println("=====================================");
-                            addCourse(getUserInput());
+                        }
+                        courseNode result = searchByCcode(getUserCcode());
+                        if (result == null) {
+                            System.out.println("Thông báo: Ccode không tồn tại !");
+                        } else {
+                            System.out.println("Thông báo: Đã tìm thấy !");
+                            result.course.displayCourse();
+                        }
+                        break;
+                    case 6:
+                        if (emptyTree()) {
+                            System.out.println("Thông báo: Cây BStree chưa có dữ liệu, Vui lòng đổ dữ liệu vào cây BSTree!");
                             break;
-                        case 3:
-                            if (emptyTree()) {
-                                System.out.println("Thông báo: Cây BSTree không có dữ liệu. Vui lòng nạp dữ liệu vào trước!");
-                                break;
-                            }
-                            System.out.println("=====================================");
-                            displayPreOrder();
+                        }
+                        deleteByCopying(getUserDeleteCcode());
+                        break;
+                    case 7:
+                        if (emptyTree()) {
+                            System.out.println("Thông báo: Cây BStree chưa có dữ liệu, Vui lòng đổ dữ liệu vào cây BSTree!");
                             break;
-                        case 4:
-                            System.out.println("=====================================");
-                            saveCourseToFilePostOrder();
-                            break;
-                        case 5:
-                            if (emptyTree()) {
-                                System.out.println("Thông báo: Cây BSTree không có dữ liệu. Vui lòng nạp dữ liệu vào trước!");
-                                break;
-                            }
-                            courseNode result = searchByCcode(getUserCcode());                          
-                            
-                            if (result == null) {
-                                System.out.println("=====================================");
-                                System.out.println("Thông báo: Ccode không tồn tại!");
-                                break;
-                            } else {
-                                System.out.println("------------>Đã tìm thấy<------------");
-                                System.out.println("=====================================");
-                                result.course.displayCourse();
-                                break;
-                            } 
-                        case 6:
-                            if (emptyTree()) {
-                                System.out.println("Thông báo: Cây BStree chưa có dữ liệu, Vui lòng đổ dữ liệu vào cây BSTree!");
-                                break;
-                            }
-                            System.out.println("=====================================");
-                            deleteByCopying(getUserDeleteCcode());
-                            break;
-                        case 7:
-                            if (emptyTree()) {
-                                System.out.println("Thông báo: Cây BStree chưa có dữ liệu, Vui lòng đổ dữ liệu vào cây BSTree!");
-                                break;
-                            }
-                            System.out.println("=====================================");
-                            deleteByMerging(getUserDeleteCcode());
-                            break;
-                        case 8:
-                            
-                        case 13:
-                            System.out.println("=====================================");
-                            displayPostOrder();
-                            break;                          
+                        }
+                        deleteByMerging(getUserDeleteCcode());
+                        break;
+                    case 9:  
+                        displayBreadthFirstTraversal(); 
+                        break;
+                    case 13: 
+                        System.out.println("|======================================================|");
+                        displayPostOrder(); 
+                        break;
+                    default:
+                        break;
                     }
-                }         
+
             } catch (NumberFormatException e) {
                 System.out.println("Lỗi: Vui lòng nhập một số nguyên.");
             }
         } while (true);
-    }
+    }   
+    
+
 
     public Courses getUserInput() {
         String ccode, scode, sname, semester, year;
