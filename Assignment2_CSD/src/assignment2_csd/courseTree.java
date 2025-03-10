@@ -423,8 +423,24 @@ public class courseTree {
             } else { //TH DeleteNode không phải root;
                 maxNode = deleteNode.left;
                 if (maxNode.right == null) {
-                    
+                    maxNode.right = deleteNode.right;
+                    if (parentOfDeleteNode.left == deleteNode) { //TH Node cần xóa nằm bên trái của Root.
+                        parentOfDeleteNode.left = maxNode;
+                    } else if (parentOfDeleteNode.right == deleteNode) { //TH Node cần xóa nằm bên phải cỉa Root.
+                        parentOfDeleteNode.right = maxNode;
+                    }
+                    return;
                 }
+                while (maxNode.right.right != null) {
+                    maxNode = maxNode.right;
+                }
+                maxNode.right.right = deleteNode.right; // Gắn con phải của maxNode vào con phải của deletNode.
+                if (parentOfDeleteNode.left == deleteNode) {
+                    parentOfDeleteNode.left = deleteNode.left; //Xóa bỏ DeleteNode.
+                } else {
+                    parentOfDeleteNode.right = deleteNode.left;
+                }
+                return;               
             }
         }
     }
@@ -518,6 +534,8 @@ public class courseTree {
                             System.out.println("=====================================");
                             deleteByMerging(getUserDeleteCcode());
                             break;
+                        case 8:
+                            
                         case 13:
                             System.out.println("=====================================");
                             displayPostOrder();
